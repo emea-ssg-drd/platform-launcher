@@ -24,11 +24,11 @@ commands:
             cd platform-setup
             sudo ./setup-ubuntu16.04.sh
   setup-branch:
-    description: "Setup branch and check whether PR/master is tagged corretly"
+    description: "Setup subbranches"
     steps:
       - run:
           shell: /bin/bash
-          name: Setup branch and check whether PR/master is tagged
+          name: Setup sub branches
           command: |
             sudo apt install jq
             # First find out Base Branch (if any)
@@ -46,10 +46,6 @@ commands:
               #If on develop or a PR towards develop assume that all submodules are updated
               echo Detected that PR is related to develop. Will update all subrepos.
               make update
-            fi
-            echo "Checking whether master or PR for master is tagged"
-            if [ "${CIRCLE_BRANCH}" = "master" ] || [ "${BASE_BRANCH}" = "master" ]; then
-              git describe --tags --exact-match || exit 1
             fi
   build-branch:
     description: "Build branch"
@@ -111,6 +107,14 @@ commands:
               echo "Commit is not signedoff"
               exit 1
             fi
+  check-tagged:
+    description: "Check whether latest commit is tagged"
+    steps:
+      - run:
+          name: Check whether most recent commit is tagged
+          shell: /bin/bash
+          command: |
+            git describe --tags --exact-match || exit 1
 jobs:
   build:
     executor: my-executor
@@ -125,6 +129,7 @@ jobs:
     executor: my-executor
     steps:
       - checkout
+      - check-tagged
       - setup-build-environment
       - setup-branch
       - build-branch
