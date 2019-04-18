@@ -23,6 +23,7 @@ commands:
           command: |
             cd platform-setup
             sudo ./setup-ubuntu16.04.sh
+            exit 1
   setup-branch:
     description: "Setup subbranches"
     steps:
