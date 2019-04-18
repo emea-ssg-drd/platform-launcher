@@ -23,7 +23,7 @@ commands:
           command: |
             cd platform-setup
             sudo ./setup-ubuntu16.04.sh
-            exit 1
+             nvm install v8.0.0
   setup-branch:
     description: "Setup subbranches"
     steps:
